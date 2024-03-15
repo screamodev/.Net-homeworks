@@ -17,23 +17,58 @@
 
     public static int[] SortArrayForEvenNumbers(int[] numbers)
     {
-        return numbers.Where(i => i % 2 == 0).ToArray();
+        int evenCounter = 0;
+
+        int[] evenNumbers = new int[numbers.Length];
+
+        for (int i = 0; i < evenNumbers.Length; i++)
+        {
+            if (numbers[i] % 2 == 0)
+            {
+                evenNumbers[i] = numbers[i];
+                evenCounter++;
+            }
+        }
+
+        Array.Sort(evenNumbers);
+        Array.Reverse(evenNumbers);
+        Array.Resize(ref evenNumbers, evenCounter);
+
+        return evenNumbers;
     }
 
     public static int[] SortArrayForOddNumbers(int[] numbers)
     {
-        return numbers.Where(i => i % 2 != 0).ToArray();
+        int oddCounter = 0;
+
+        int[] oddNumbers = new int[numbers.Length];
+
+        for (int i = 0; i < oddNumbers.Length; i++)
+        {
+            if (numbers[i] % 2 != 0)
+            {
+                oddNumbers[i] = numbers[i];
+                oddCounter++;
+            }
+        }
+
+        Array.Sort(oddNumbers);
+        Array.Reverse(oddNumbers);
+        Array.Resize(ref oddNumbers, oddCounter);
+
+        return oddNumbers;
     }
 
     public static char[] ChangeToAlphabetLetters(int[] lettersPositions)
     {
         char[] result = new char[lettersPositions.Length];
+        int letterShift = 1;
 
         for (int j = 0; j < lettersPositions.Length; j++)
         {
-            int letterIndex = lettersPositions[j] - 1;
+            int letterIndex = lettersPositions[j] - letterShift;
 
-            if (letterIndex > MaxRandomNumber)
+            if (letterIndex > MaxRandomNumber | letterIndex < 0)
             {
                 throw new ArgumentException("Letter position is out of array range");
             }
@@ -66,7 +101,16 @@
 
     public static int CountArrayUppercaseLetters(char[] letters)
     {
-        return letters.Where(i => char.IsUpper(i)).ToArray().Length;
+        int counter = 0;
+        foreach (var letter in letters)
+        {
+            if (char.IsUpper(letter))
+            {
+                counter++;
+            }
+        }
+
+        return counter;
     }
 
     public static string ChooseArrayWithMoreUppercaseLetters(char[] firstArray, char[] secondArray)
@@ -81,19 +125,29 @@
         {
             return "First array contains more uppercase letters.";
         }
-        else if (isLettersEqual)
+
+        if (isLettersEqual)
         {
             return "Both arrays contains equal amount.";
         }
-        else
-        {
-            return "Second array contains more uppercase letters.";
-        }
+
+        return "Second array contains more uppercase letters.";
     }
 
-    public static void Main(string[] args)
+    public static void Main()
     {
-        var n = int.Parse(Console.ReadLine());
+        Console.WriteLine("Enter amount of random numbers: ");
+
+        string userInput = Console.ReadLine();
+
+        int n;
+
+        bool success = int.TryParse(userInput, out n);
+        if (!success)
+        {
+            Console.WriteLine($"Invalid user input.");
+            return;
+        }
 
         int[] randomNumbers = new int[n];
 
@@ -107,15 +161,38 @@
 
         char[] oddNumbersAsLetters = ChangeToAlphabetLetters(oddNumbers);
 
-        string evenNumbersResult = string.Concat(evenNumbers.Select(x => x.ToString() + " "));
-        string oddNumbersResult = string.Concat(oddNumbers.Select(x => x.ToString() + " "));
-        string evenNumbersAsLettersResult = string.Concat(evenNumbersAsLetters.Select(x => x.ToString() + " "));
-        string oddNumbersAsLettersResult = string.Concat(oddNumbersAsLetters.Select(x => x.ToString() + " "));
+        string evenNumbersResult = string.Empty;
+
+        foreach (var number in evenNumbers)
+        {
+            evenNumbersResult = evenNumbersResult + number + " ";
+        }
+
+        string oddNumbersResult = string.Empty;
+
+        foreach (var number in oddNumbers)
+        {
+            oddNumbersResult = oddNumbersResult + number + " ";
+        }
+
+        string evenNumbersAsLettersResult = string.Empty;
+
+        foreach (var letter in evenNumbersAsLetters)
+        {
+            evenNumbersAsLettersResult = evenNumbersAsLettersResult + letter + " ";
+        }
+
+        string oddNumbersAsLettersResult = string.Empty;
+
+        foreach (var letter in oddNumbersAsLetters)
+        {
+            oddNumbersAsLettersResult = oddNumbersAsLettersResult + letter + " ";
+        }
 
         Console.WriteLine(ChooseArrayWithMoreUppercaseLetters(evenNumbersAsLetters, oddNumbersAsLetters));
         Console.WriteLine("even: " + evenNumbersResult);
         Console.WriteLine("odd: " + oddNumbersResult);
-        Console.WriteLine("even: " + evenNumbersAsLettersResult);
-        Console.WriteLine("odd: " + oddNumbersAsLettersResult);
+        Console.WriteLine("even letters: " + evenNumbersAsLettersResult);
+        Console.WriteLine("odd letters: " + oddNumbersAsLettersResult);
     }
 }
