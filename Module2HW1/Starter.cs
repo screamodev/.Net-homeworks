@@ -6,15 +6,14 @@ public class Starter
 
     private readonly Logger _logger = Logger.LoggerInstance;
 
-    private int LoopCounter { get; set; }
-
     public void Run()
     {
         Actions actions = new Actions();
+        var loopCounter = 0;
 
-        while (LoopCounter < MaxIterationsAmount)
+        while (loopCounter < MaxIterationsAmount)
         {
-            LoopCounter++;
+            loopCounter++;
 
             var randomNumber = new Random().Next(1, 4);
 
@@ -24,7 +23,7 @@ public class Starter
                     Result requestResult = actions.SendSomeRequest();
                     if (requestResult.Status == false)
                     {
-                        _logger.Log("Error", $"Action failed by a reason: {requestResult.ErrorMessage}");
+                        _logger.Log(LogType.Error, $"Action failed by a reason: {requestResult.ErrorMessage}");
                     }
 
                     break;
@@ -32,7 +31,7 @@ public class Starter
                     Result sortResult = actions.SortSomeData();
                     if (sortResult.Status == false)
                     {
-                        _logger.Log("Error", $"Action failed by a reason: {sortResult.ErrorMessage}");
+                        _logger.Log(LogType.Error, $"Action failed by a reason: {sortResult.ErrorMessage}");
                     }
 
                     break;
@@ -40,7 +39,7 @@ public class Starter
                     Result deleteResult = actions.DeleteAnItem();
                     if (deleteResult.Status == false)
                     {
-                       _logger.Log("Error", $"Action failed by a reason: {deleteResult.ErrorMessage}");
+                       _logger.Log(LogType.Error, $"Action failed by a reason: {deleteResult.ErrorMessage}");
                     }
 
                     break;
