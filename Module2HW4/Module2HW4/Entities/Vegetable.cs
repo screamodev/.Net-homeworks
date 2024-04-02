@@ -1,3 +1,5 @@
+namespace Module2HW4.Entities;
+
 public class Vegetable : Plant
 {
     public Vegetable(string name, double calories, double weight) : base(name)
@@ -6,6 +8,6 @@ public class Vegetable : Plant
         Weight = weight;
     }
 
-    public double Calories { get; set; }
-    public double Weight { get; set; }
+    public double Calories { get; }
+    public double Weight { get; }
 }

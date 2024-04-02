@@ -1,6 +1,6 @@
-using Module2HW4.entities;
+using Module2HW4.Entities;
 
-namespace Module2HW4.utilities;
+namespace Module2HW4.Utilities;
 
 public static class VegetableExtensionMethods
 {

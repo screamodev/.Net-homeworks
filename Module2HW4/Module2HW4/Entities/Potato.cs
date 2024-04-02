@@ -1,3 +1,5 @@
+namespace Module2HW4.Entities;
+
 public class Potato : RootVegetable
 {
     public Potato(double calories, double weight, bool isRoot, bool isPeeled) : base("Potato", calories, weight, isRoot)

@@ -1,4 +1,4 @@
-namespace Module2HW4.entities;
+namespace Module2HW4.Entities;
 
 public class LeafyVegetable : Vegetable
 {

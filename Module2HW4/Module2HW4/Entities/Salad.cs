@@ -1,7 +1,6 @@
-using System.Diagnostics;
-using Module2HW4.utilities;
+using Module2HW4.Utilities;
 
-namespace Module2HW4.entities;
+namespace Module2HW4.Entities;
 
 public class Salad : Vegetable
 {
@@ -10,7 +9,7 @@ public class Salad : Vegetable
         Vegetables = vegetables;
     }
 
-    public Vegetable[] Vegetables { get; set; }
+    public Vegetable[] Vegetables { get; }
 
     public static double CalculateCalories(Vegetable[] vegetables)
     {

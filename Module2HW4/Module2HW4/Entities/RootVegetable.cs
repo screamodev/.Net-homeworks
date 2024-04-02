@@ -1,3 +1,5 @@
+namespace Module2HW4.Entities;
+
 public class RootVegetable : Vegetable
 {
      public RootVegetable(string name, double calories, double weight, bool isRoot) : base(name, calories, weight)
@@ -5,5 +7,5 @@ public class RootVegetable : Vegetable
           IsRoot = isRoot;
      }
 
-     public bool IsRoot { get; set; }
+     public bool IsRoot { get; }
 }
