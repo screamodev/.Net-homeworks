@@ -1,14 +1,17 @@
-namespace Homeworks.Module2HW1;
+using Module2HW5.Entities;
 
-public class Starter
+namespace Module2HW5.Services;
+
+public class StarterService
 {
     private const int MaxIterationsAmount = 100;
 
-    private readonly Logger _logger = Logger.LoggerInstance;
+    private readonly LoggerService _logger = LoggerService.LoggerServiceInstance;
+
+    private readonly ActionsService _actionsService = new ActionsService();
 
     public void Run()
     {
-        Actions actions = new Actions();
         var loopCounter = 0;
 
         while (loopCounter < MaxIterationsAmount)
@@ -22,7 +25,7 @@ public class Starter
                 case 1:
                     try
                     {
-                        actions.SendSomeRequest();
+                        _actionsService.SendSomeRequest();
                     }
                     catch (Exception error)
                     {
@@ -32,7 +35,7 @@ public class Starter
                 case 2:
                     try
                     {
-                        actions.SortSomeData();
+                        _actionsService.SortSomeData();
                     }
                     catch (Exception error)
                     {
@@ -42,7 +45,7 @@ public class Starter
                 case 3:
                     try
                     {
-                        actions.DeleteAnItem();
+                        _actionsService.DeleteAnItem();
                     }
                     catch (Exception error)
                     {

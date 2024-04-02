@@ -1,10 +1,12 @@
-﻿namespace Homeworks.Module2HW1;
+﻿using Module2HW5.Services;
+
+namespace Module2HW5;
 
 public class Program
 {
     public static void Main()
     {
-        Starter starter = new Starter();
+        StarterService starter = new StarterService();
 
         starter.Run();
     }

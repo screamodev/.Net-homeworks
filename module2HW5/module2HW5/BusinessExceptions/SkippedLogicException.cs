@@ -1,4 +1,4 @@
-namespace Homeworks.Module2HW1.Exceptions;
+namespace Module2HW5.BusinessExceptions;
 
 public class SkippedLogicException : Exception
 {

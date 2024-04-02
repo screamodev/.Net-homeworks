@@ -1,4 +1,4 @@
-namespace Homeworks.Module2HW1;
+namespace Module2HW5.Entities;
 
 public enum LogType
 {

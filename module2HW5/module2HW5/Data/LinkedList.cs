@@ -1,4 +1,6 @@
-namespace Homeworks.Module2HW1;
+using Module2HW5.Entities;
+
+namespace Module2HW5.Data;
 
 internal class LinkedList
 {

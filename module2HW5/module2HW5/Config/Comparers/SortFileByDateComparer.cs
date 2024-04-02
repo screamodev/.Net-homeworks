@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Module2HW4.utilities;
+namespace Module2HW5.Config.Comparers;
 
 public class SortFileByDateComparer : IComparer
 {

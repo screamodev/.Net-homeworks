@@ -1,6 +1,6 @@
-using Homeworks.Module2HW1.Repositories;
+using Module2HW5.Repositories;
 
-namespace Homeworks.Module2HW1;
+namespace Module2HW5.Services;
 
 public class FileService
 {

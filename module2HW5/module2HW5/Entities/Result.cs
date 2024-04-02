@@ -1,8 +1,7 @@
-namespace Homeworks.Module2HW1;
+namespace Module2HW5.Entities;
 
 public class Result
 {
-
     public Result(DateTime time, LogType logType, string errorMessage)
     {
         Time = time;

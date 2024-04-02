@@ -1,23 +1,24 @@
-using Homeworks.Module2HW1.Repositories;
+using Module2HW5.Data;
+using Module2HW5.Entities;
+using Module2HW5.Repositories;
+using Module2HW5.Services;
 using Newtonsoft.Json;
 
-namespace Homeworks.Module2HW1;
-
-public sealed class Logger
+public sealed class LoggerService
 {
-    private static readonly Logger Instance = new ();
+    private static readonly LoggerService Instance = new ();
 
     private LinkedList _logs = new LinkedList();
 
-    static Logger()
+    static LoggerService()
     {
     }
 
-    private Logger()
+    private LoggerService()
     {
     }
 
-    public static Logger LoggerInstance => Instance;
+    public static LoggerService LoggerServiceInstance => Instance;
 
     public void Log(LogType logType, string logMessage)
     {

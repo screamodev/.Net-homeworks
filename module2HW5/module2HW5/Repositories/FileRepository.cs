@@ -1,6 +1,6 @@
-using Module2HW4.utilities;
+using Module2HW5.Config.Comparers;
 
-namespace Homeworks.Module2HW1.Repositories;
+namespace Module2HW5.Repositories;
 
 public class FileRepository
 {
