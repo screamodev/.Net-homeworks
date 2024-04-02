@@ -47,7 +47,7 @@ public class Program
            }
 
            Cart cart = cartService.Add(cartId, product);
-           Console.WriteLine("Product was successfully added to the cart!\nIf you want to make order press: '1'\nIf you want to continue press: '2'");
+           Console.WriteLine("Product was successfully added to the cart!\nIf you want to make order press: '1'\nIf you want to continue press any key");
 
            int userChoice;
 
