@@ -32,6 +32,20 @@ public class OrderService : BaseDataService<ApplicationDbContext>, IOrderService
         return id;
     }
 
+    public async Task<int> UpdateOrder(int orderId, List<OrderItem> items)
+    {
+        var id = await _orderRepository.UpdateOrderAsync(orderId, items);
+        _loggerService.LogInformation($"Updated order with Id = {id}");
+        return id;
+    }
+
+    public async Task<bool> DeleteOrder(int orderId)
+    {
+        var isSuccess = await _orderRepository.DeleteOrderAsync(orderId);
+        _loggerService.LogInformation($"Order with id: {orderId} was deleted");
+        return isSuccess;
+    }
+
     public async Task<Order> GetOrderAsync(int id)
     {
         var result = await _orderRepository.GetOrderAsync(id);

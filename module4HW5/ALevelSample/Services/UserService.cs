@@ -39,6 +39,29 @@ public class UserService : BaseDataService<ApplicationDbContext>, IUserService
         });
     }
 
+    public async Task<string> UpdateUser(string id, string firstName, string lastName)
+    {
+        return await ExecuteSafeAsync(async () =>
+        {
+            var updatedUserId = await _userRepository.UpdateUserAsync(id, firstName, lastName);
+            _loggerService.LogInformation($"Updated user with Id = {id}");
+
+            return updatedUserId;
+        });
+    }
+
+    public async Task<bool> DeleteUser(string id)
+    {
+        return await ExecuteSafeAsync(async () =>
+        {
+            var isSuccess = await _userRepository.DeleteUserAsync(id);
+
+            _loggerService.LogInformation($"User with id: {id} was deleted");
+
+            return isSuccess;
+        });
+    }
+
     public async Task<User> GetUser(string id)
     {
         var user = await _userRepository.GetUserAsync(id);

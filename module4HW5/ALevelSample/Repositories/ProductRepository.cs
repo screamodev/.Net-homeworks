@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using ALevelSample.Data;
 using ALevelSample.Data.Entities;
@@ -29,6 +30,39 @@ public class ProductRepository : IProductRepository
         await _dbContext.SaveChangesAsync();
 
         return result.Entity.Id;
+    }
+
+    public async Task<int> UpdateProductAsync(int id, string name, double price)
+    {
+        var product = await _dbContext.Products.FindAsync(id);
+
+        if (product == null)
+        {
+            throw new Exception("Product not found");
+        }
+
+        product.Name = name;
+        product.Price = price;
+
+        await _dbContext.SaveChangesAsync();
+
+        return product.Id;
+    }
+
+    public async Task<bool> DeleteProductAsync(int id)
+    {
+        var product = await _dbContext.Products.FindAsync(id);
+
+        if (product == null)
+        {
+            throw new Exception("Product not found");
+        }
+
+        _dbContext.Products.Remove(product);
+
+        await _dbContext.SaveChangesAsync();
+
+        return true;
     }
 
     public async Task<ProductEntity?> GetProductAsync(int id)

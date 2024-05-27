@@ -37,4 +37,36 @@ public class UserRepository : IUserRepository
     {
         return await _dbContext.Users.FirstOrDefaultAsync(f => f.Id == id);
     }
+
+    public async Task<string> UpdateUserAsync(string id, string firstName, string lastName)
+    {
+        var user = await _dbContext.Users.FindAsync(id);
+
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        user.FirstName = firstName;
+        user.LastName = lastName;
+
+        await _dbContext.SaveChangesAsync();
+        return user.Id;
+    }
+
+    public async Task<bool> DeleteUserAsync(string id)
+    {
+        var user = await _dbContext.Users.FindAsync(id);
+
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        _dbContext.Users.Remove(user);
+
+        await _dbContext.SaveChangesAsync();
+
+        return true;
+    }
 }

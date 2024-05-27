@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,6 +38,43 @@ public class OrderRepository : IOrderRepository
         await _dbContext.SaveChangesAsync();
 
         return result.Entity.Id;
+    }
+
+    public async Task<int> UpdateOrderAsync(int orderId, List<OrderItem> items)
+    {
+        var order = await _dbContext.Orders.FindAsync(orderId);
+
+        if (order == null)
+        {
+            throw new Exception("Order not found");
+        }
+
+        _dbContext.OrderItems.UpdateRange(items.Select(s => new OrderItemEntity()
+        {
+            Count = s.Count,
+            OrderId = order.Id,
+            ProductId = s.ProductId
+        }));
+
+        await _dbContext.SaveChangesAsync();
+
+        return order.Id;
+    }
+
+    public async Task<bool> DeleteOrderAsync(int orderId)
+    {
+        var order = await _dbContext.Orders.FindAsync(orderId);
+
+        if (order == null)
+        {
+            throw new Exception("Order not found");
+        }
+
+        _dbContext.Remove(order);
+
+        await _dbContext.SaveChangesAsync();
+
+        return true;
     }
 
     public async Task<OrderEntity?> GetOrderAsync(int id)

@@ -30,6 +30,20 @@ public class ProductService : BaseDataService<ApplicationDbContext>, IProductSer
         return id;
     }
 
+    public async Task<int> UpdateProduct(int id, string name, double price)
+    {
+        var updatedProductId = await _productRepository.UpdateProductAsync(id, name, price);
+        _loggerService.LogInformation($"Updated product with Id = {id}");
+        return updatedProductId;
+    }
+
+    public async Task<bool> DeleteProduct(int id)
+    {
+        var isDeleted = await _productRepository.DeleteProductAsync(id);
+        _loggerService.LogInformation($"Updated product with Id = {id}");
+        return isDeleted;
+    }
+
     public async Task<Product> GetProductAsync(int id)
     {
         var result = await _productRepository.GetProductAsync(id);
