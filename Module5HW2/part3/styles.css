@@ -1,0 +1,11 @@
+a[href^="https"] {
+    color: red;
+}
+
+.list > li:last-child {
+    background-color: green;
+}
+
+.list + p {
+    font-size: 26px;
+}

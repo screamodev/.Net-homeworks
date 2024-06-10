@@ -1,0 +1,34 @@
+body {
+    height: 100%;
+    width: 100%;
+}
+
+header {
+    text-align: center;
+}
+
+main {
+    width: 100%;
+    
+    ul {
+        .boldItem {
+            font-weight: bold;
+        }
+        .italicItem {
+            font-style: italic; 
+        }
+        .underlinedItem {
+            text-decoration: underline;
+        }
+        .redItem {
+            color: red;
+        }
+    }
+}
+
+footer {
+    text-align: center;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}
