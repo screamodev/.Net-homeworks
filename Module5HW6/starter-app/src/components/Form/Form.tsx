@@ -37,6 +37,8 @@ const Form: FC<FormProps> = (props: FormProps): ReactElement => {
                                 id={input.name}
                                 label={input.label}
                                 name={input.name}
+                                type={input.type}
+                                onChange={input.onChange}
                                 autoComplete={input.name}
                                 autoFocus
                             />

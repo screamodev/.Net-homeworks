@@ -1,8 +1,8 @@
 import {Box, Button, Card, CardActionArea, CardContent, CardMedia, Typography} from "@mui/material"
 import {FC, ReactElement} from "react";
-import {IUser} from "../../../interfaces/users";
 import {useNavigate} from "react-router-dom";
-import * as userApi from "../../../api/modules/users";
+import {IUser} from "../../../../interfaces/users";
+import * as userApi from "../../../../api/modules/users";
 
 const UserCard: FC<IUser> = (props): ReactElement => {
 

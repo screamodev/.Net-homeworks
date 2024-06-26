@@ -1,65 +1,40 @@
-import React, {ReactElement, FC, useEffect, useState} from "react";
-import {Box, CircularProgress, Grid, Pagination} from '@mui/material'
-import * as userApi from "../../api/modules/users"
-import {IUser} from "../../interfaces/users";
-import UserCard from "../../components/User/UserCard";
+import React, { ReactElement, FC } from "react";
+import { Box, Button, Container, Pagination } from '@mui/material';
+import { observer } from "mobx-react-lite";
+import { useNavigate } from "react-router-dom";
+import UsersTable from "./Users/UsersTable";  // Импортируем новый компонент
+import HomeStore from "../../stores/HomeStore";
+
+const store = new HomeStore();
 
 const Home: FC<any> = (): ReactElement => {
-    const [users, setUsers] = useState<IUser[] | null>(null)
-    const [totalPages, setTotalPages] = useState<number>(0)
-    const [currentPage, setCurrentPage] = useState<number>(1)
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const navigate = useNavigate();
 
-    useEffect(() => {
-        const getUser = async () => {
-            try {
-                setIsLoading(true)
-                const res = await userApi.getByPage(currentPage)
-                setUsers(res.data)
-                setTotalPages(res.total_pages)
-            } catch (e) {
-                if (e instanceof Error) {
-                    console.error(e.message)
-                }
-            }
-            setIsLoading(false)
-        }
-        getUser()
-    }, [currentPage])
-
-  return (
-      <Box
-          sx={{
-              flexGrow: 1,
-              backgroundColor: "whitesmoke",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-          }}>
-          <Grid container spacing={4} justifyContent="center" my={4}>
-              {isLoading ? (
-                  <CircularProgress />
-              ) : (
-                  <>
-                      {users?.map((item) => (
-                          <Grid key={item.id} item lg={2} md={3} xs={6}>
-                              <UserCard {...item} />
-                          </Grid>
-                      ))}
-                  </>
-              )}
-          </Grid>
-          <Box
-              sx={{
-                  display: 'flex',
-                  justifyContent: 'center'
-              }}
-          >
-              <Pagination count={totalPages} page={currentPage} onChange={ (event, page)=> setCurrentPage(page)} />
-          </Box>
-      </Box>
-  );
+    return (
+        <Box
+            sx={{
+                flexGrow: 1,
+                backgroundColor: "whitesmoke",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >
+            <Container sx={{ display: "flex", justifyContent: "end", mt: 2 }} maxWidth={false}>
+                <Button variant="outlined" onClick={() => navigate(`/create-user`)}>Add user</Button>
+            </Container>
+            <UsersTable isLoading={store.isLoading} users={store.users} />
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center'
+                }}
+            >
+                <Pagination count={store.totalPages} page={store.currentPage} onChange={async (event, page) => await store.changePage(page)} />
+            </Box>
+        </Box>
+    );
 };
 
-export default Home;
+export default observer(Home);

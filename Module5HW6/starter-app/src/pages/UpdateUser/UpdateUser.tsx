@@ -1,16 +1,15 @@
 import React, {ReactElement, FC, useState} from "react";
 import {Box, CircularProgress} from '@mui/material'
-import UserForm from "../../components/Form";
-import * as userApi from "../../api/modules/users";
 import {useParams} from "react-router-dom";
+import * as userApi from "../../api/modules/users";
 import {IUpdateUserResponse} from "../../interfaces/users";
+import Form from "../../components/Form";
 
 const UpdateUser: FC = (): ReactElement => {
     const { id } = useParams()
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [updatedAt, setUpdatedAt] = useState<string>("")
 
-    
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -43,9 +42,9 @@ const UpdateUser: FC = (): ReactElement => {
             }}>
             {isLoading ? (
                 <CircularProgress />
-            ) : (<UserForm 
+            ) : (<Form
                 title={"Update user"} 
-                inputs={[{name: "name", label: "Name"}, {name: "job", label: "Job"}]} 
+                inputs={[{name: "name", label: "Name", type: "text"}, {name: "job", label: "Job", type: "text"}]}
                 buttonText={"Update"} 
                 handleSubmit={handleSubmit} />
                 )}

@@ -1,29 +1,19 @@
-// pages
 import Home from "./pages/Home";
 import About from "./pages/About";
-import Products from "./pages/Products";
-import User from "./pages/User";
-
-// other
-import {FC} from "react";
+import User from "./pages/Home/Users";
 import CreateUser from "./pages/CreateUser/CreateUser";
 import UpdateUser from "./pages/UpdateUser";
-import ResourceCard from "./components/Resource/ResourceCard";
+import {Route} from "./interfaces/route";
+import Resources from "./pages/Resources";
+import NotFound from "./pages/NotFound";
+import ResourceCard from "./pages/Resources/Resource/ResourceCard";
+import Resource from "./pages/Resources/Resource/Resource";
 
-// interface
-interface Route {
-    key: string,
-    title: string,
-    path: string,
-    enabled: boolean,
-    component: FC<{}>
-}
-
-export const routes: Array<Route> = [
+export const protectedRoutes: Array<Route> = [
     {
         key: 'home-route',
         title: 'Home',
-        path: '/',
+        path: '/home',
         enabled: true,
         component: Home
     },
@@ -35,11 +25,11 @@ export const routes: Array<Route> = [
         component: About
     },
     {
-        key: 'products-route',
-        title: 'Products',
-        path: '/products',
+        key: 'resources-route',
+        title: 'Resources',
+        path: '/resources',
         enabled: true,
-        component: Products
+        component: Resources
     },
     {
         key: 'user-route',
@@ -52,7 +42,7 @@ export const routes: Array<Route> = [
         key: 'create-user-route',
         title: 'Create user',
         path: '/create-user',
-        enabled: true,
+        enabled: false,
         component: CreateUser
     },
     {
@@ -63,10 +53,17 @@ export const routes: Array<Route> = [
         component: UpdateUser
     },
     {
-        key: 'product-route',
-        title: 'Product',
-        path: '/product/:id',
+        key: 'resource-route',
+        title: 'Resource',
+        path: '/resource/:id',
         enabled: false,
-        component: ResourceCard
+        component: Resource
     },
+    {
+        key: 'not-found',
+        title: 'Register',
+        path: '*',
+        enabled: false,
+        component: NotFound
+    }
 ]
