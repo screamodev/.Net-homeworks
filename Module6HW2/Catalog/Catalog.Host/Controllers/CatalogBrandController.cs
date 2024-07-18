@@ -22,6 +22,12 @@ public class CatalogBrandController : ControllerBase
     public async Task<IActionResult> Add([FromQuery] CatalogBrandCreateDto catalogBrand)
     {
         var result = await _catalogBrandService.AddBrandAsync(catalogBrand);
+
+        if (result == null)
+        {
+           return StatusCode(500, "Data wasn't added");
+        }
+
         return Ok(result);
     }
 

@@ -22,6 +22,12 @@ public class CatalogTypeController : ControllerBase
     public async Task<IActionResult> Add([FromQuery] CatalogTypeCreateDto catalogType)
     {
         var result = await _catalogTypeService.AddTypeAsync(catalogType);
+
+        if (result == null)
+        {
+            return StatusCode(500, "Data wasn't added");
+        }
+
         return Ok(result);
     }
 

@@ -1,5 +1,7 @@
 using Catalog.Host.Configurations;
 using Catalog.Host.Data;
+using Catalog.Host.Data.Entities;
+using Catalog.Host.Models.Dtos;
 using Catalog.Host.Repositories;
 using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services;
@@ -19,10 +21,10 @@ builder.Services.AddTransient<ICatalogItemService, CatalogItemService>();
 
 builder.Services.AddTransient<ICatalogService, CatalogService>();
 
-builder.Services.AddTransient<ICatalogBrandRepository, CatalogBrandRepository>();
+builder.Services.AddTransient<IRepository<CatalogBrand, CatalogBrandCreateDto, CatalogBrandUpdateDto>, Repository<CatalogBrand, CatalogBrandCreateDto, CatalogBrandUpdateDto>>();
 builder.Services.AddTransient<ICatalogBrandService, CatalogBrandService>();
 
-builder.Services.AddTransient<ICatalogTypeRepository, CatalogTypeRepository>();
+builder.Services.AddTransient<IRepository<CatalogType, CatalogTypeCreateDto, CatalogTypeUpdateDto>, Repository<CatalogType, CatalogTypeCreateDto, CatalogTypeUpdateDto>>();
 builder.Services.AddTransient<ICatalogTypeService, CatalogTypeService>();
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>(opts => opts.UseNpgsql(configuration["ConnectionString"]));

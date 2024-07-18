@@ -1,20 +1,20 @@
 using AutoMapper;
 using Catalog.Host.Data;
+using Catalog.Host.Data.Entities;
 using Catalog.Host.Models.Dtos;
-using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services.Interfaces;
 
 namespace Catalog.Host.Services;
 
 public class CatalogTypeService : BaseDataService<ApplicationDbContext>, ICatalogTypeService
 {
-    private readonly ICatalogTypeRepository _catalogTypeRepository;
+    private readonly IRepository<CatalogType, CatalogTypeCreateDto, CatalogTypeUpdateDto> _catalogTypeRepository;
     private readonly IMapper _mapper;
 
     public CatalogTypeService(
         IDbContextWrapper<ApplicationDbContext> dbContextWrapper,
         ILogger<BaseDataService<ApplicationDbContext>> logger,
-        ICatalogTypeRepository catalogTypeRepository,
+        IRepository<CatalogType, CatalogTypeCreateDto, CatalogTypeUpdateDto> catalogTypeRepository,
         IMapper mapper)
         : base(dbContextWrapper, logger)
     {
@@ -27,23 +27,17 @@ public class CatalogTypeService : BaseDataService<ApplicationDbContext>, ICatalo
         return await ExecuteSafeAsync(async () =>
         {
             var result = await _catalogTypeRepository.GetAllAsync();
-            var typeDtos = result.Select(s => _mapper.Map<CatalogTypeDto>(s)).ToList();
-
-            return typeDtos;
+            return result.Select(s => _mapper.Map<CatalogTypeDto>(s)).ToList();
         });
     }
 
-    public async Task<CatalogTypeDto> AddTypeAsync(CatalogTypeCreateDto catalogType)
+    public async Task<CatalogTypeDto?> AddTypeAsync(CatalogTypeCreateDto catalogType)
     {
         return await ExecuteSafeAsync(async () =>
         {
             var item = await _catalogTypeRepository.AddAsync(catalogType);
 
-            return new CatalogTypeDto()
-            {
-                Id = item.Id,
-                Type = item.Type
-            };
+            return _mapper.Map<CatalogTypeDto>(item);
         });
     }
 
@@ -53,16 +47,7 @@ public class CatalogTypeService : BaseDataService<ApplicationDbContext>, ICatalo
         {
             var item = await _catalogTypeRepository.UpdateAsync(id, catalogType);
 
-            if (item == null)
-            {
-                return null;
-            }
-
-            return new CatalogTypeDto()
-            {
-                Id = item.Id,
-                Type = item.Type
-            };
+            return _mapper.Map<CatalogTypeDto>(item);
         });
     }
 
@@ -70,9 +55,7 @@ public class CatalogTypeService : BaseDataService<ApplicationDbContext>, ICatalo
     {
         return await ExecuteSafeAsync(async () =>
         {
-            var isDeleted = await _catalogTypeRepository.DeleteAsync(id);
-
-            return isDeleted;
+            return await _catalogTypeRepository.DeleteAsync(id);
         });
     }
 }

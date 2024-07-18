@@ -12,6 +12,10 @@ public class MappingProfile : Profile
             .ForMember("PictureUrl", opt
                 => opt.MapFrom<CatalogItemPictureResolver, string>(c => c.PictureFileName));
         CreateMap<CatalogBrand, CatalogBrandDto>();
+        CreateMap<CatalogBrandCreateDto, CatalogBrand>();
+        CreateMap<CatalogBrandUpdateDto, CatalogBrand>();
         CreateMap<CatalogType, CatalogTypeDto>();
+        CreateMap<CatalogTypeCreateDto, CatalogType>();
+        CreateMap<CatalogTypeUpdateDto, CatalogType>();
     }
 }
