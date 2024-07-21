@@ -1,7 +1,7 @@
 namespace Catalog.Host.Models.Requests;
 
-public class PaginatedItemsWithFiltersRequest : PaginatedItemsRequest
+public class PaginatedItemsWithFiltersRequest<T> : PaginatedItemsRequest
+    where T : notnull
 {
-    public string? Type { get; set; }
-    public string? Brand { get; set; }
+    public Dictionary<T, int>? Filters { get; set; }
 }

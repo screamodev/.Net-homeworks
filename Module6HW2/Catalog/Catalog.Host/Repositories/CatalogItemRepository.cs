@@ -1,8 +1,10 @@
 using Catalog.Host.Data;
 using Catalog.Host.Data.Entities;
+using Catalog.Host.Models.Enums;
 using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Catalog.Host.Repositories;
 
@@ -19,21 +21,24 @@ public class CatalogItemRepository : ICatalogItemRepository
         _logger = logger;
     }
 
-    public async Task<PaginatedItems<CatalogItem>> GetByPageAsync(int pageIndex, int pageSize, string? brand, string? type)
+    public async Task<PaginatedItems<CatalogItem>> GetByPageAsync(int pageIndex, int pageSize, Dictionary<CatalogFilter, int>? filters)
     {
         var query = _dbContext.CatalogItems
             .Include(i => i.CatalogBrand)
             .Include(i => i.CatalogType)
             .AsQueryable();
 
-        if (!string.IsNullOrEmpty(brand))
+        if (filters != null)
         {
-            query = query.Where(b => b.CatalogBrand.Brand == brand);
-        }
+            if (filters.TryGetValue(CatalogFilter.BrandId, out var brandId1))
+            {
+                query = query.Where(b => b.CatalogBrand.Id == brandId1);
+            }
 
-        if (!string.IsNullOrEmpty(type))
-        {
-            query = query.Where(t => t.CatalogType.Type == type);
+            if (filters.TryGetValue(CatalogFilter.TypeId, out var typeId1))
+            {
+                query = query.Where(t => t.CatalogType.Id == typeId1);
+            }
         }
 
         var totalItems = await _dbContext.CatalogItems
@@ -44,6 +49,11 @@ public class CatalogItemRepository : ICatalogItemRepository
             .Skip(pageSize * pageIndex)
             .Take(pageSize)
             .ToListAsync();
+
+        foreach (var item in itemsOnPage)
+        {
+            Console.WriteLine(item.PictureFileName);
+        }
 
         return new PaginatedItems<CatalogItem>() { TotalCount = totalItems, Data = itemsOnPage };
     }

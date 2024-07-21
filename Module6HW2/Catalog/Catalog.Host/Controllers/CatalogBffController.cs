@@ -1,10 +1,14 @@
 using System.Net;
+using System.Text.Json;
 using Catalog.Host.Models.Dtos;
+using Catalog.Host.Models.Enums;
 using Catalog.Host.Models.Requests;
 using Catalog.Host.Models.Response;
 using Catalog.Host.Services.Interfaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Catalog.Host.Controllers;
 
@@ -26,11 +30,14 @@ public class CatalogBffController : ControllerBase
         _catalogTypeService = catalogTypeService;
     }
 
-    [HttpGet]
+    [HttpPost]
     [ProducesResponseType(typeof(PaginatedItemsResponse<CatalogItemDto>), (int)HttpStatusCode.OK)]
-    public async Task<IActionResult> Items([FromQuery] PaginatedItemsWithFiltersRequest request)
+    public async Task<IActionResult> Items(PaginatedItemsWithFiltersRequest<CatalogFilter> request)
     {
-        var result = await _catalogService.GetCatalogItemsAsync(request.PageIndex, request.PageSize, request.Brand, request.Type);
+        var result = await _catalogService.GetCatalogItemsAsync(request.PageIndex, request.PageSize, request.Filters);
+
+        Console.WriteLine("234 " + JsonSerializer.Serialize(result));
+
         return Ok(result);
     }
 
