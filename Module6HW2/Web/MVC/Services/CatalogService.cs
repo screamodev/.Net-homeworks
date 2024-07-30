@@ -18,7 +18,7 @@ public class CatalogService : ICatalogService
         _logger = logger;
     }
 
-    public async Task<Catalog> GetCatalogItems(int page, int take, int? brand, int? type)
+    public async Task<Catalog?> GetCatalogItems(int page, int take, int? brand, int? type)
     {
         var filters = new Dictionary<CatalogTypeFilter, int>();
 
@@ -57,6 +57,11 @@ public class CatalogService : ICatalogService
             }
         };
         
+        if (brands == null)
+        {
+            return selectList;
+        }
+        
         selectList.AddRange(brands.Select(brand => new SelectListItem
         {
             Value = brand.Id.ToString(),
@@ -78,6 +83,11 @@ public class CatalogService : ICatalogService
                 Text = "None"
             }
         };
+        
+        if (types == null)
+        {
+            return selectList;
+        }
         
         selectList.AddRange(types.Select(type => new SelectListItem
         {

@@ -19,12 +19,10 @@ public class CatalogController : Controller
         itemsPage ??= 6;
         
         var catalog = await _catalogService.GetCatalogItems(page.Value, itemsPage.Value, brandFilterApplied, typesFilterApplied);
-        if (catalog == null)
+        if (catalog == null || catalog.Data == null)
         {
             return View("Error");
         }
-
-        Console.WriteLine(JsonSerializer.Serialize(catalog));
         
         var info = new PaginationInfo()
         {

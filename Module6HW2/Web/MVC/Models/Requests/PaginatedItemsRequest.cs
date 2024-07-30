@@ -1,6 +1,6 @@
 namespace MVC.Dtos;
 
-public class PaginatedItemsRequest<T>
+public class PaginatedItemsRequest<T> where T : notnull
 {
     public int PageIndex { get; set; }
 

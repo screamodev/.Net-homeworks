@@ -1,6 +1,8 @@
 using System.Threading;
+using Castle.Core.Internal;
 using Catalog.Host.Data.Entities;
 using Catalog.Host.Models.Dtos;
+using Catalog.Host.Models.Enums;
 using Catalog.Host.Models.Response;
 using Newtonsoft.Json;
 using Xunit.Abstractions;
@@ -13,7 +15,7 @@ public class CatalogServiceTest
 
     private readonly Mock<ICatalogItemRepository> _catalogItemRepository;
     private readonly Mock<IMapper> _mapper;
-    private readonly Mock<Host.Services.Interfaces.IDbContextWrapper<ApplicationDbContext>> _dbContextWrapper;
+    private readonly Mock<IDbContextWrapper<ApplicationDbContext>> _dbContextWrapper;
     private readonly Mock<ILogger<CatalogService>> _logger;
     private ITestOutputHelper _testOutputHelper;
 
@@ -21,7 +23,7 @@ public class CatalogServiceTest
     {
         _catalogItemRepository = new Mock<ICatalogItemRepository>();
         _mapper = new Mock<IMapper>();
-        _dbContextWrapper = new Mock<Host.Services.Interfaces.IDbContextWrapper<ApplicationDbContext>>();
+        _dbContextWrapper = new Mock<IDbContextWrapper<ApplicationDbContext>>();
         _logger = new Mock<ILogger<CatalogService>>();
         _testOutputHelper = output;
 
@@ -64,14 +66,13 @@ public class CatalogServiceTest
         _catalogItemRepository.Setup(s => s.GetByPageAsync(
             It.Is<int>(i => i == testPageIndex),
             It.Is<int>(i => i == testPageSize),
-            It.Is<string?>(i => i == null),
-            It.Is<string?>(i => i == null))).ReturnsAsync(pagingPaginatedItemsSuccess);
+            It.Is<Dictionary<CatalogFilter, int>?>(i => i == null))).ReturnsAsync(pagingPaginatedItemsSuccess);
 
         _mapper.Setup(s => s.Map<CatalogItemDto>(
             It.Is<CatalogItem>(i => i.Equals(catalogItemSuccess)))).Returns(catalogItemDtoSuccess);
 
         // act
-        var result = await _catalogService.GetCatalogItemsAsync(testPageIndex, testPageSize, null, null);
+        var result = await _catalogService.GetCatalogItemsAsync(testPageIndex, testPageSize, null);
 
         _testOutputHelper.WriteLine(JsonConvert.SerializeObject(result));
 
@@ -89,17 +90,19 @@ public class CatalogServiceTest
         // arrange
         var testPageIndex = 1000;
         var testPageSize = 10000;
-        var testBrand = " ";
-        var testType = " ";
+
+        var filtersTest = new Dictionary<CatalogFilter, int>()
+        {
+            { CatalogFilter.BrandId, 1 }
+        };
 
         _catalogItemRepository.Setup(s => s.GetByPageAsync(
             It.Is<int>(i => i == testPageIndex),
             It.Is<int>(i => i == testPageSize),
-            It.Is<string?>(i => i == testBrand),
-            It.Is<string>(i => i == testType))).Returns((Func<PaginatedItemsResponse<CatalogItemDto>>)null!);
+            It.Is<Dictionary<CatalogFilter, int>>(i => i.ContainsKey(CatalogFilter.BrandId)))).Returns((Func<PaginatedItemsResponse<CatalogItemDto>>)null!);
 
         // act
-        var result = await _catalogService.GetCatalogItemsAsync(testPageIndex, testPageSize, testBrand, testType);
+        var result = await _catalogService.GetCatalogItemsAsync(testPageIndex, testPageSize, filtersTest);
 
         // assert
         result.Should().BeNull();

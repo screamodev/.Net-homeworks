@@ -9,7 +9,7 @@ public class CatalogBrandServiceTest
     private readonly ICatalogBrandService _catalogBrandService;
 
     private readonly Mock<IRepository<CatalogBrand, CatalogBrandCreateDto, CatalogBrandUpdateDto>> _catalogBrandRepository;
-    private readonly Mock<Host.Services.Interfaces.IDbContextWrapper<ApplicationDbContext>> _dbContextWrapper;
+    private readonly Mock<IDbContextWrapper<ApplicationDbContext>> _dbContextWrapper;
     private readonly Mock<ILogger<CatalogService>> _logger;
     private readonly Mock<IMapper> _mapper;
 
@@ -38,7 +38,7 @@ public class CatalogBrandServiceTest
     public CatalogBrandServiceTest()
     {
         _catalogBrandRepository = new Mock<IRepository<CatalogBrand, CatalogBrandCreateDto, CatalogBrandUpdateDto>>();
-        _dbContextWrapper = new Mock<Host.Services.Interfaces.IDbContextWrapper<ApplicationDbContext>>();
+        _dbContextWrapper = new Mock<IDbContextWrapper<ApplicationDbContext>>();
         _logger = new Mock<ILogger<CatalogService>>();
         _mapper = new Mock<IMapper>();
 

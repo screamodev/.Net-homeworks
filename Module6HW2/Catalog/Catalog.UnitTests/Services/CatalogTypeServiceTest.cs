@@ -9,7 +9,7 @@ public class CatalogTypeServiceTest
     private readonly ICatalogTypeService _catalogTypeService;
 
     private readonly Mock<IRepository<CatalogType, CatalogTypeCreateDto, CatalogTypeUpdateDto>> _catalogTypeRepository;
-    private readonly Mock<Host.Services.Interfaces.IDbContextWrapper<ApplicationDbContext>> _dbContextWrapper;
+    private readonly Mock<IDbContextWrapper<ApplicationDbContext>> _dbContextWrapper;
     private readonly Mock<ILogger<CatalogService>> _logger;
     private readonly Mock<IMapper> _mapper;
 
@@ -38,7 +38,7 @@ public class CatalogTypeServiceTest
     public CatalogTypeServiceTest()
     {
         _catalogTypeRepository = new Mock<IRepository<CatalogType, CatalogTypeCreateDto, CatalogTypeUpdateDto>>();
-        _dbContextWrapper = new Mock<Host.Services.Interfaces.IDbContextWrapper<ApplicationDbContext>>();
+        _dbContextWrapper = new Mock<IDbContextWrapper<ApplicationDbContext>>();
         _logger = new Mock<ILogger<CatalogService>>();
         _mapper = new Mock<IMapper>();
 
