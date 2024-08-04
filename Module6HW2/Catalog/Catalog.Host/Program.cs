@@ -8,6 +8,13 @@ using Catalog.Host.Services;
 using Catalog.Host.Services.Interfaces;
 using Infrastructure.Filters;
 using Infrastructure.Extensions;
+using Infrastructure.RateLimit.Configurations;
+using Infrastructure.RateLimit.Middlewares;
+using Infrastructure.RateLimit.Services;
+using Infrastructure.RateLimit.Services.Interfaces;
+using Infrastructure.Redis.Configurations;
+using Infrastructure.Redis.Services;
+using Infrastructure.Redis.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -55,10 +62,25 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.AddConfiguration();
+
+builder.Services.Configure<RedisConfig>(
+    builder.Configuration.GetSection("Redis"));
+
+builder.Services.Configure<RateLimitOptions>(options =>
+{
+    options.AllowedRequestsCount = 10;
+    options.TimeLimit = TimeSpan.FromMinutes(1);
+});
+
 builder.Services.AddAuthorization(configuration);
 
 builder.Services.AddAutoMapper(typeof(Program));
 
+builder.Services.AddSingleton<IRateLimitService, RateLimitService>();
+
+builder.Services.AddTransient<IJsonSerializer, JsonSerializer>();
+builder.Services.AddTransient<IRedisCacheConnectionService, RedisCacheConnectionService>();
+builder.Services.AddTransient<ICacheService, CacheService>();
 builder.Services.AddTransient<ICatalogItemRepository, CatalogItemRepository>();
 builder.Services.AddTransient<ICatalogItemService, CatalogItemService>();
 builder.Services.AddTransient<ICatalogService, CatalogService>();
@@ -93,6 +115,7 @@ app.UseSwagger()
 
 app.UseRouting();
 app.UseCors("CorsPolicy");
+app.UseRateLimit();
 
 app.UseEndpoints(endpoints =>
 {

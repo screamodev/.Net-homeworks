@@ -1,20 +1,26 @@
+using Basket.Host.Models;
 using Basket.Host.Services.Interfaces;
+using Infrastructure.Redis.Services.Interfaces;
 
 namespace Basket.Host.Services;
 
 public class BasketService : IBasketService
 {
-    public void GetAllAsync()
+    private readonly ICacheService _cacheService;
+
+    public BasketService(ICacheService cacheService)
     {
-        Console.WriteLine("TestMessage");
+        _cacheService = cacheService;
+    }
+    
+    public async Task TestAdd(string userId, string data)
+    {
+        await _cacheService.AddOrUpdateAsync(userId, data);
     }
 
-    public void GetOneAsync(string userId)
+    public async Task<TestGetResponse> TestGet(string userId)
     {
-        Console.WriteLine($"userId: {userId}");
-    }
-
-    public void AddAsync()
-    {
+        var result = await _cacheService.GetAsync<string>(userId);
+        return new TestGetResponse() { Data = result };
     }
 }

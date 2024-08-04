@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Catalog.Host.Models.Dtos;
 using Catalog.Host.Models.Enums;
 using Catalog.Host.Models.Requests;
@@ -30,8 +29,6 @@ public class CatalogBffController : ControllerBase
     public async Task<IActionResult> Items(PaginatedItemsWithFiltersRequest<CatalogFilter> request)
     {
         var result = await _catalogService.GetCatalogItemsAsync(request.PageIndex, request.PageSize, request.Filters);
-
-        Console.WriteLine("234 " + JsonSerializer.Serialize(result));
 
         return Ok(result);
     }

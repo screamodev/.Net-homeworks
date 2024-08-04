@@ -10,13 +10,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Localization" Version="2.2.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\Infrastructure\Infrastructure.RateLimit\Infrastructure.RateLimit.csproj" />
+        <ProjectReference Include="..\..\Infrastructure\Infrastructure.Redis\Infrastructure.Redis.csproj" />
         <ProjectReference Include="..\..\Infrastructure\Infrastructure\Infrastructure.csproj" />
-        <ProjectReference Include="..\..\Web\MVC\MVC.csproj" />
     </ItemGroup>
 
 </Project>

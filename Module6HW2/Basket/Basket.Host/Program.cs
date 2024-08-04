@@ -2,6 +2,16 @@ using Basket.Host.Services;
 using Basket.Host.Services.Interfaces;
 using Infrastructure.Extensions;
 using Infrastructure.Filters;
+using Infrastructure.RateLimit.Filters;
+using Infrastructure.RateLimit.Configurations;
+using Infrastructure.RateLimit.Middlewares;
+using Infrastructure.RateLimit.Services;
+using Infrastructure.RateLimit.Services.Interfaces;
+using Infrastructure.Redis.Configurations;
+using Infrastructure.Redis.Services;
+using Infrastructure.Redis.Services.Interfaces;
+using Infrastructure.Services;
+using Infrastructure.Services.Interfaces;
 using Microsoft.OpenApi.Models;
 
 var configuration = GetConfiguration();
@@ -18,9 +28,9 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "eShop- Basket HTTP API",
+        Title = "eShop - Basket HTTP API",
         Version = "v1",
-        Description = "The Basket Service HTTP API",
+        Description = "The Basket Service HTTP API"
     });
 
     var authority = configuration["Authorization:Authority"];
@@ -36,18 +46,45 @@ builder.Services.AddSwaggerGen(options =>
                 Scopes = new Dictionary<string, string>()
                 {
                     { "mvc", "website" },
-                },
+                }
             }
-        },
+        }
     });
-
+    
     options.OperationFilter<AuthorizeCheckOperationFilter>();
 });
 
 builder.AddConfiguration();
+
+builder.Services.Configure<RedisConfig>(
+    builder.Configuration.GetSection("Redis"));
+
+builder.Services.Configure<RateLimitOptions>(options =>
+{
+    options.AllowedRequestsCount = 10;
+    options.TimeLimit = TimeSpan.FromMinutes(1);
+});
+
 builder.Services.AddAuthorization(configuration);
 
+builder.Services.AddSingleton<IRateLimitService, RateLimitService>();
+builder.Services.AddScoped<RateLimitFilter>();
+
+builder.Services.AddTransient<IJsonSerializer, JsonSerializer>();
+builder.Services.AddTransient<IRedisCacheConnectionService, RedisCacheConnectionService>();
+builder.Services.AddTransient<ICacheService, CacheService>();
 builder.Services.AddTransient<IBasketService, BasketService>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "CorsPolicy",
+        builder => builder
+            .SetIsOriginAllowed((host) => true)
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
+});
 
 var app = builder.Build();
 

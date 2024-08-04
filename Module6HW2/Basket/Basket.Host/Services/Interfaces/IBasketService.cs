@@ -1,10 +1,9 @@
+using Basket.Host.Models;
+
 namespace Basket.Host.Services.Interfaces;
 
 public interface IBasketService
 {
-   void GetAllAsync();
-
-   void GetOneAsync(string userId);
-
-   void AddAsync();
+    Task TestAdd(string userId, string data);
+    Task<TestGetResponse> TestGet(string userId);
 }
