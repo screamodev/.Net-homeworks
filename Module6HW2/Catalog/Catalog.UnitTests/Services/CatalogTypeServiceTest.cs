@@ -1,6 +1,7 @@
+using System.Linq;
 using System.Threading;
 using Catalog.Host.Data.Entities;
-using Catalog.Host.Models.Dtos;
+using Catalog.Host.Models.Dtos.CatalogType;
 
 namespace Catalog.UnitTests.Services;
 
@@ -51,6 +52,7 @@ public class CatalogTypeServiceTest
     [Fact]
     public async Task GetAllAsync_Success()
     {
+        // arrange
         var catalogTypesSuccess = new List<CatalogType>()
         {
             new CatalogType()
@@ -70,6 +72,8 @@ public class CatalogTypeServiceTest
 
         // assert
         result.Should().NotBeNull();
+        result.Should().HaveCount(1);
+        result.First().Type.Should().Be(_catalogTypeDtoSuccess.Type);
     }
 
     [Fact]
@@ -121,7 +125,7 @@ public class CatalogTypeServiceTest
         var result = await _catalogTypeService.AddTypeAsync(_catalogTypeCreateDto);
 
         // assert
-        result.Should().Be(testResult);
+        result.Should().BeNull();
     }
 
     [Fact]
@@ -158,7 +162,7 @@ public class CatalogTypeServiceTest
         var result = await _catalogTypeService.UpdateTypeAsync(_testId, _catalogTypeUpdateDto);
 
         // assert
-        result.Should().Be(testResult);
+        result.Should().BeNull();
     }
 
     [Fact]
@@ -172,7 +176,7 @@ public class CatalogTypeServiceTest
         var result = await _catalogTypeService.DeleteTypeAsync(_testId);
 
         // assert
-        result.Should().NotBeNull();
+        result.Should().BeTrue();
     }
 
     [Fact]
@@ -188,6 +192,40 @@ public class CatalogTypeServiceTest
         var result = await _catalogTypeService.DeleteTypeAsync(_testId);
 
         // assert
-        result.Should().BeNull();
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task AddAsync_ThrowsException()
+    {
+        // arrange
+        _catalogTypeRepository.Setup(s => s.AddAsync(
+            It.IsAny<CatalogTypeCreateDto>())).ThrowsAsync(new InvalidOperationException());
+
+        // act & assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _catalogTypeService.AddTypeAsync(_catalogTypeCreateDto));
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ThrowsException()
+    {
+        // arrange
+        _catalogTypeRepository.Setup(s => s.UpdateAsync(
+            It.IsAny<int>(),
+            It.IsAny<CatalogTypeUpdateDto>())).ThrowsAsync(new InvalidOperationException());
+
+        // act & assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _catalogTypeService.UpdateTypeAsync(_testId, _catalogTypeUpdateDto));
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ThrowsException()
+    {
+        // arrange
+        _catalogTypeRepository.Setup(s => s.DeleteAsync(
+            It.IsAny<int>())).ThrowsAsync(new InvalidOperationException());
+
+        // act & assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _catalogTypeService.DeleteTypeAsync(_testId));
     }
 }

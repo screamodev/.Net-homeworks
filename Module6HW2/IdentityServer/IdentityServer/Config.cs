@@ -30,7 +30,11 @@ namespace IdentityServer
                 {
                     Scopes = new List<Scope>
                     {
-                        new Scope("catalog.catalogitem"),
+                        new Scope("catalog.catalogItem"),
+                        new Scope("catalog.catalogBrand"),
+                        new Scope("catalog.catalogType"),
+                        new Scope("catalog.catalogGender"),
+                        new Scope("catalog.catalogSize"),
                     },
                 },
                 new ApiResource("basket")
@@ -83,7 +87,12 @@ namespace IdentityServer
 
                     AllowedScopes =
                     {
-                        "mvc", "catalog.catalogitem"
+                        "mvc", 
+                        "catalog.catalogItem", 
+                        "catalog.catalogBrand", 
+                        "catalog.catalogType",
+                        "catalog.catalogGender",
+                        "catalog.catalogSize"
                     }
                 },
                 new Client

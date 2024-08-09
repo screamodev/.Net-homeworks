@@ -1,20 +1,23 @@
-using System.Net;
-using Catalog.Host.Models.Dtos;
+using Catalog.Host.Models.Dtos.CatalogType;
 using Catalog.Host.Services.Interfaces;
-using Infrastructure;
-using Microsoft.AspNetCore.Mvc;
+using Infrastructure.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Catalog.Host.Controllers;
 
 [ApiController]
+[Authorize(Policy = AuthPolicy.AllowClientPolicy)]
+[Scope("catalog.catalogType")]
 [Route(ComponentDefaults.DefaultRoute)]
 public class CatalogTypeController : ControllerBase
 {
+    private readonly ILogger<CatalogTypeController> _logger;
     private readonly ICatalogTypeService _catalogTypeService;
 
-    public CatalogTypeController(ICatalogTypeService catalogTypeService)
+    public CatalogTypeController(ICatalogTypeService catalogTypeService, ILogger<CatalogTypeController> logger)
     {
         _catalogTypeService = catalogTypeService;
+        _logger = logger;
     }
 
     [HttpPost]
@@ -25,7 +28,7 @@ public class CatalogTypeController : ControllerBase
 
         if (result == null)
         {
-            return StatusCode(500, "Data wasn't added");
+            return StatusCode(500);
         }
 
         return Ok(result);

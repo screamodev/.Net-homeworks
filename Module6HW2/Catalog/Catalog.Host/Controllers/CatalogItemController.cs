@@ -1,13 +1,14 @@
-using System.Net;
-using Catalog.Host.Models.Requests;
+using Catalog.Host.Models.Dtos.CatalogItem;
 using Catalog.Host.Models.Response;
 using Catalog.Host.Services.Interfaces;
-using Infrastructure;
-using Microsoft.AspNetCore.Mvc;
+using Infrastructure.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Catalog.Host.Controllers;
 
 [ApiController]
+[Authorize(Policy = AuthPolicy.AllowClientPolicy)]
+[Scope("catalog.catalogItem")]
 [Route(ComponentDefaults.DefaultRoute)]
 public class CatalogItemController : ControllerBase
 {
@@ -24,9 +25,15 @@ public class CatalogItemController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(typeof(AddItemResponse<int?>), (int)HttpStatusCode.OK)]
-    public async Task<IActionResult> Add(CreateProductRequest request)
+    public async Task<IActionResult> Add([FromQuery] CreateCatalogItemDto request)
     {
         var result = await _catalogItemService.Add(request.Name, request.Description, request.Price, request.AvailableStock, request.CatalogBrandId, request.CatalogTypeId, request.PictureFileName);
+
+        if (result == null)
+        {
+            return StatusCode(500);
+        }
+
         return Ok(new AddItemResponse<int?>() { Id = result });
     }
 }

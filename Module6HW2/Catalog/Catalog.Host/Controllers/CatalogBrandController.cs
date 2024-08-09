@@ -1,20 +1,23 @@
-using System.Net;
-using Catalog.Host.Models.Dtos;
+using Catalog.Host.Models.Dtos.CatalogBrand;
 using Catalog.Host.Services.Interfaces;
-using Infrastructure;
-using Microsoft.AspNetCore.Mvc;
+using Infrastructure.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Catalog.Host.Controllers;
 
 [ApiController]
+[Authorize(Policy = AuthPolicy.AllowClientPolicy)]
+[Scope("catalog.catalogBrand")]
 [Route(ComponentDefaults.DefaultRoute)]
 public class CatalogBrandController : ControllerBase
 {
     private readonly ICatalogBrandService _catalogBrandService;
+    private readonly ILogger<CatalogBrandController> _logger;
 
-    public CatalogBrandController(ICatalogBrandService catalogBrandService)
+    public CatalogBrandController(ICatalogBrandService catalogBrandService, ILogger<CatalogBrandController> logger)
     {
         _catalogBrandService = catalogBrandService;
+        _logger = logger;
     }
 
     [HttpPost]
@@ -25,7 +28,7 @@ public class CatalogBrandController : ControllerBase
 
         if (result == null)
         {
-           return StatusCode(500, "Data wasn't added");
+            return StatusCode(500);
         }
 
         return Ok(result);

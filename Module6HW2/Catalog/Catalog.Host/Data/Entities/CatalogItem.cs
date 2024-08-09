@@ -18,9 +18,15 @@ public class CatalogItem
 
     public CatalogType CatalogType { get; set; }
 
+    public int CatalogGenderId { get; set; }
+
+    public CatalogGender CatalogGender { get; set; }
+
     public int CatalogBrandId { get; set; }
 
     public CatalogBrand CatalogBrand { get; set; }
+
+    public List<CatalogSize> CatalogItemSizes { get; set; }
 
     public int AvailableStock { get; set; }
 }

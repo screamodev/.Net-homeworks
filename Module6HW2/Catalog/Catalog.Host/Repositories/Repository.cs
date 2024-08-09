@@ -1,19 +1,25 @@
 using AutoMapper;
 using Catalog.Host.Data;
-using Catalog.Host.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+
+namespace Catalog.Host.Repositories;
 
 public class Repository<TEntity, TCreateDto, TUpdateDto>
     : IRepository<TEntity, TCreateDto, TUpdateDto>
     where TEntity : class, new()
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly ILogger<Repository<TEntity, TCreateDto, TUpdateDto>> _logger;
     private readonly IMapper _mapper;
 
-    public Repository(IDbContextWrapper<ApplicationDbContext> dbContextWrapper, IMapper mapper)
+    public Repository(
+        IDbContextWrapper<ApplicationDbContext> dbContextWrapper,
+        IMapper mapper,
+        ILogger<Repository<TEntity, TCreateDto, TUpdateDto>> logger)
     {
         _dbContext = dbContextWrapper.DbContext;
         _mapper = mapper;
+        _logger = logger;
     }
 
     public async Task<List<TEntity>> GetAllAsync()
@@ -23,7 +29,14 @@ public class Repository<TEntity, TCreateDto, TUpdateDto>
 
     public async Task<TEntity?> GetByIdAsync(int id)
     {
-        return await _dbContext.Set<TEntity>().FindAsync(id);
+        var item = await _dbContext.Set<TEntity>().FindAsync(id);
+
+        if (item == null)
+        {
+            _logger.LogError($"Item with such id: {id} doesn't exist.");
+        }
+
+        return item;
     }
 
     public async Task<TEntity?> AddAsync(TCreateDto dto)
@@ -40,6 +53,7 @@ public class Repository<TEntity, TCreateDto, TUpdateDto>
         var item = await GetByIdAsync(id);
         if (item == null)
         {
+            _logger.LogError($"Item with such id: {id} doesn't exist.");
             return null;
         }
 
@@ -54,6 +68,7 @@ public class Repository<TEntity, TCreateDto, TUpdateDto>
         var item = await GetByIdAsync(id);
         if (item == null)
         {
+            _logger.LogError($"Item with such id: {id} doesn't exist.");
             return null;
         }
 

@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Catalog.Host.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220108225624_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20240805154529_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -26,11 +26,53 @@ namespace Catalog.Host.Migrations
             modelBuilder.HasSequence("catalog_brand_hilo")
                 .IncrementsBy(10);
 
+            modelBuilder.HasSequence("catalog_gender_hilo")
+                .IncrementsBy(10);
+
             modelBuilder.HasSequence("catalog_hilo")
+                .IncrementsBy(10);
+
+            modelBuilder.HasSequence("catalog_size_hilo")
                 .IncrementsBy(10);
 
             modelBuilder.HasSequence("catalog_type_hilo")
                 .IncrementsBy(10);
+
+            modelBuilder.Entity("Catalog.Host.Data.Entities.CatalogBrand", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "catalog_brand_hilo");
+
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CatalogBrand", (string)null);
+                });
+
+            modelBuilder.Entity("Catalog.Host.Data.Entities.CatalogGender", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "catalog_gender_hilo");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CatalogGender", (string)null);
+                });
 
             modelBuilder.Entity("Catalog.Host.Data.Entities.CatalogItem", b =>
                 {
@@ -44,6 +86,9 @@ namespace Catalog.Host.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("CatalogBrandId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CatalogGenderId")
                         .HasColumnType("integer");
 
                     b.Property<int>("CatalogTypeId")
@@ -68,30 +113,32 @@ namespace Catalog.Host.Migrations
 
                     b.HasIndex("CatalogBrandId");
 
+                    b.HasIndex("CatalogGenderId");
+
                     b.HasIndex("CatalogTypeId");
 
                     b.ToTable("Catalog", (string)null);
                 });
 
-            modelBuilder.Entity("Catalog.Host.Data.Enums.CatalogBrand", b =>
+            modelBuilder.Entity("Catalog.Host.Data.Entities.CatalogSize", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "catalog_brand_hilo");
+                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "catalog_size_hilo");
 
-                    b.Property<string>("Brand")
+                    b.Property<string>("Size")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(5)
+                        .HasColumnType("character varying(5)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("CatalogBrand", (string)null);
+                    b.ToTable("CatalogSize", (string)null);
                 });
 
-            modelBuilder.Entity("Catalog.Host.Data.Enums.CatalogType", b =>
+            modelBuilder.Entity("Catalog.Host.Data.Entities.CatalogType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -109,15 +156,36 @@ namespace Catalog.Host.Migrations
                     b.ToTable("CatalogType", (string)null);
                 });
 
+            modelBuilder.Entity("CatalogItemCatalogSize", b =>
+                {
+                    b.Property<int>("CatalogItemSizesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CatalogItemsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CatalogItemSizesId", "CatalogItemsId");
+
+                    b.HasIndex("CatalogItemsId");
+
+                    b.ToTable("CatalogItemCatalogSize");
+                });
+
             modelBuilder.Entity("Catalog.Host.Data.Entities.CatalogItem", b =>
                 {
-                    b.HasOne("Catalog.Host.Data.Enums.CatalogBrand", "CatalogBrand")
+                    b.HasOne("Catalog.Host.Data.Entities.CatalogBrand", "CatalogBrand")
                         .WithMany()
                         .HasForeignKey("CatalogBrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Catalog.Host.Data.Enums.CatalogType", "CatalogType")
+                    b.HasOne("Catalog.Host.Data.Entities.CatalogGender", "CatalogGender")
+                        .WithMany()
+                        .HasForeignKey("CatalogGenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Catalog.Host.Data.Entities.CatalogType", "CatalogType")
                         .WithMany()
                         .HasForeignKey("CatalogTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -125,7 +193,24 @@ namespace Catalog.Host.Migrations
 
                     b.Navigation("CatalogBrand");
 
+                    b.Navigation("CatalogGender");
+
                     b.Navigation("CatalogType");
+                });
+
+            modelBuilder.Entity("CatalogItemCatalogSize", b =>
+                {
+                    b.HasOne("Catalog.Host.Data.Entities.CatalogSize", null)
+                        .WithMany()
+                        .HasForeignKey("CatalogItemSizesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Catalog.Host.Data.Entities.CatalogItem", null)
+                        .WithMany()
+                        .HasForeignKey("CatalogItemsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

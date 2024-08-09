@@ -1,4 +1,4 @@
-using Catalog.Host.Models.Dtos;
+using Catalog.Host.Models.Dtos.CatalogType;
 
 namespace Catalog.Host.Services.Interfaces;
 

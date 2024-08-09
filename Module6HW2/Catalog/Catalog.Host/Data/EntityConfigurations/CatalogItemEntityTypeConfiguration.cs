@@ -32,5 +32,8 @@ public class CatalogItemEntityTypeConfiguration
         builder.HasOne(ci => ci.CatalogType)
             .WithMany()
             .HasForeignKey(ci => ci.CatalogTypeId);
+
+        builder.HasMany(catalogItem => catalogItem.CatalogItemSizes)
+            .WithMany(catalogSize => catalogSize.CatalogItems);
     }
 }

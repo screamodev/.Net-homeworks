@@ -1,7 +1,10 @@
 using Catalog.Host.Configurations;
 using Catalog.Host.Data;
 using Catalog.Host.Data.Entities;
-using Catalog.Host.Models.Dtos;
+using Catalog.Host.Models.Dtos.CatalogBrand;
+using Catalog.Host.Models.Dtos.CatalogGender;
+using Catalog.Host.Models.Dtos.CatalogSize;
+using Catalog.Host.Models.Dtos.CatalogType;
 using Catalog.Host.Repositories;
 using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services;
@@ -52,7 +55,11 @@ builder.Services.AddSwaggerGen(options =>
                 Scopes = new Dictionary<string, string>()
                 {
                     { "mvc", "website" },
-                    { "catalog.catalogitem", "catalog.catalogitem" }
+                    { "catalog.catalogItem", "Catalog item api" },
+                    { "catalog.catalogBrand", "Catalog brand api" },
+                    { "catalog.catalogType", "Catalog type api" },
+                    { "catalog.catalogGender", "Catalog gender api" },
+                    { "catalog.catalogSize", "Catalog size api" },
                 }
             }
         }
@@ -74,6 +81,8 @@ builder.Services.Configure<RateLimitOptions>(options =>
 
 builder.Services.AddAuthorization(configuration);
 
+builder.Services.AddHttpLogging(o => { });
+
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddSingleton<IRateLimitService, RateLimitService>();
@@ -88,6 +97,10 @@ builder.Services.AddTransient<IRepository<CatalogBrand, CatalogBrandCreateDto, C
 builder.Services.AddTransient<ICatalogBrandService, CatalogBrandService>();
 builder.Services.AddTransient<IRepository<CatalogType, CatalogTypeCreateDto, CatalogTypeUpdateDto>, Repository<CatalogType, CatalogTypeCreateDto, CatalogTypeUpdateDto>>();
 builder.Services.AddTransient<ICatalogTypeService, CatalogTypeService>();
+builder.Services.AddTransient<IRepository<CatalogGender, CatalogGenderCreateDto, CatalogGenderUpdateDto>, Repository<CatalogGender, CatalogGenderCreateDto, CatalogGenderUpdateDto>>();
+builder.Services.AddTransient<ICatalogGenderService, CatalogGenderService>();
+builder.Services.AddTransient<IRepository<CatalogSize, CatalogSizeCreateDto, CatalogSizeUpdateDto>, Repository<CatalogSize, CatalogSizeCreateDto, CatalogSizeUpdateDto>>();
+builder.Services.AddTransient<ICatalogSizeService, CatalogSizeService>();
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>(opts => opts.UseNpgsql(configuration["ConnectionString"]));
 builder.Services.AddScoped<IDbContextWrapper<ApplicationDbContext>, DbContextWrapper<ApplicationDbContext>>();
@@ -115,15 +128,24 @@ app.UseSwagger()
 
 app.UseRouting();
 app.UseCors("CorsPolicy");
-app.UseRateLimit();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseHttpLogging();
+
+// app.UseRateLimit();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapDefaultControllerRoute();
     endpoints.MapControllers();
 });
 
-CreateDbIfNotExists(app);
+if (app.Environment.IsDevelopment())
+{
+    await app.UseItToSeedSqlServer();
+}
+
 app.Run();
 
 IConfiguration GetConfiguration()
@@ -134,23 +156,4 @@ IConfiguration GetConfiguration()
         .AddEnvironmentVariables();
 
     return builder.Build();
-}
-
-void CreateDbIfNotExists(IHost host)
-{
-    using (var scope = host.Services.CreateScope())
-    {
-        var services = scope.ServiceProvider;
-        try
-        {
-            var context = services.GetRequiredService<ApplicationDbContext>();
-
-            DbInitializer.Initialize(context).Wait();
-        }
-        catch (Exception ex)
-        {
-            var logger = services.GetRequiredService<ILogger<Program>>();
-            logger.LogError(ex, "An error occurred creating the DB.");
-        }
-    }
 }

@@ -1,7 +1,7 @@
 using AutoMapper;
 using Catalog.Host.Data;
 using Catalog.Host.Data.Entities;
-using Catalog.Host.Models.Dtos;
+using Catalog.Host.Models.Dtos.CatalogBrand;
 using Catalog.Host.Services.Interfaces;
 
 namespace Catalog.Host.Services;

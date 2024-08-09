@@ -1,8 +1,7 @@
 using AutoMapper;
 using Catalog.Host.Data;
-using Catalog.Host.Models.Dtos;
+using Catalog.Host.Models.Dtos.CatalogItem;
 using Catalog.Host.Models.Enums;
-using Catalog.Host.Models.Requests;
 using Catalog.Host.Models.Response;
 using Catalog.Host.Repositories.Interfaces;
 using Catalog.Host.Services.Interfaces;
@@ -25,7 +24,7 @@ public class CatalogService : BaseDataService<ApplicationDbContext>, ICatalogSer
         _mapper = mapper;
     }
 
-    public async Task<PaginatedItemsResponse<CatalogItemDto>> GetCatalogItemsAsync(int pageIndex, int pageSize, Dictionary<CatalogFilter, int>? filters)
+    public async Task<PaginatedItemsResponse<CatalogItemDto>> GetCatalogItemsAsync(int pageIndex, int pageSize, Dictionary<CatalogFilter, IEnumerable<int>>? filters)
     {
         return await ExecuteSafeAsync(async () =>
         {

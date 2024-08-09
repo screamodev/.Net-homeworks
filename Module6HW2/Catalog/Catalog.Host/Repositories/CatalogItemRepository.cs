@@ -2,9 +2,7 @@ using Catalog.Host.Data;
 using Catalog.Host.Data.Entities;
 using Catalog.Host.Models.Enums;
 using Catalog.Host.Repositories.Interfaces;
-using Catalog.Host.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace Catalog.Host.Repositories;
 
@@ -21,23 +19,42 @@ public class CatalogItemRepository : ICatalogItemRepository
         _logger = logger;
     }
 
-    public async Task<PaginatedItems<CatalogItem>> GetByPageAsync(int pageIndex, int pageSize, Dictionary<CatalogFilter, int>? filters)
+    public async Task<PaginatedItems<CatalogItem>> GetByPageAsync(int pageIndex, int pageSize, Dictionary<CatalogFilter, IEnumerable<int>>? filters)
     {
         var query = _dbContext.CatalogItems
             .Include(i => i.CatalogBrand)
             .Include(i => i.CatalogType)
+            .Include(i => i.CatalogGender)
+            .Include(i => i.CatalogItemSizes)
             .AsQueryable();
 
         if (filters != null)
         {
-            if (filters.TryGetValue(CatalogFilter.BrandId, out var brandId1))
+            foreach (var filter in filters)
             {
-                query = query.Where(b => b.CatalogBrand.Id == brandId1);
-            }
+                if (filter.Key == CatalogFilter.BrandId)
+                {
+                    var id = filter.Value.ToList().First();
+                    query = query.Where(item => item.CatalogBrand.Id == id);
+                }
 
-            if (filters.TryGetValue(CatalogFilter.TypeId, out var typeId1))
-            {
-                query = query.Where(t => t.CatalogType.Id == typeId1);
+                if (filter.Key == CatalogFilter.TypeId)
+                {
+                    var id = filter.Value.ToList().First();
+                    query = query.Where(item => item.CatalogType.Id == id);
+                }
+
+                if (filter.Key == CatalogFilter.GenderId)
+                {
+                    var id = filter.Value.ToList().First();
+                    query = query.Where(item => item.CatalogGender.Id == id);
+                }
+
+                if (filter.Key == CatalogFilter.SizeIds)
+                {
+                    var ids = filter.Value.ToList();
+                    query = query.Where(item => item.CatalogItemSizes.Any(cs => ids.Contains(cs.Id)));
+                }
             }
         }
 
@@ -49,11 +66,6 @@ public class CatalogItemRepository : ICatalogItemRepository
             .Skip(pageSize * pageIndex)
             .Take(pageSize)
             .ToListAsync();
-
-        foreach (var item in itemsOnPage)
-        {
-            Console.WriteLine(item.PictureFileName);
-        }
 
         return new PaginatedItems<CatalogItem>() { TotalCount = totalItems, Data = itemsOnPage };
     }

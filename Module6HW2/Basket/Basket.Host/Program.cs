@@ -4,7 +4,6 @@ using Infrastructure.Extensions;
 using Infrastructure.Filters;
 using Infrastructure.RateLimit.Filters;
 using Infrastructure.RateLimit.Configurations;
-using Infrastructure.RateLimit.Middlewares;
 using Infrastructure.RateLimit.Services;
 using Infrastructure.RateLimit.Services.Interfaces;
 using Infrastructure.Redis.Configurations;

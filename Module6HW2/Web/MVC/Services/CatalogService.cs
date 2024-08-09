@@ -20,16 +20,18 @@ public class CatalogService : ICatalogService
 
     public async Task<Catalog?> GetCatalogItems(int page, int take, int? brand, int? type)
     {
-        var filters = new Dictionary<CatalogTypeFilter, int>();
-
+        var filters = new Dictionary<CatalogTypeFilter, IEnumerable<int>>();
+        
         if (brand.HasValue)
         {
-            filters.Add(CatalogTypeFilter.BrandId, brand.Value);
+            Console.WriteLine("1");
+            filters.Add(CatalogTypeFilter.BrandId, new List<int> { brand.Value });
         }
         
         if (type.HasValue)
         {
-            filters.Add(CatalogTypeFilter.TypeId, type.Value);
+            Console.WriteLine("2");
+            filters.Add(CatalogTypeFilter.TypeId, new List<int> { type.Value });
         }
         
         var result = await _httpClient.SendAsync<Catalog, PaginatedItemsRequest<CatalogTypeFilter>>($"{_settings.Value.CatalogUrl}/items",
