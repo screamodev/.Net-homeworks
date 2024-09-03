@@ -328,8 +328,8 @@ namespace IdentityServer4.Quickstart.UI
 
             var vm = new LoggedOutViewModel
             {
-                AutomaticRedirectAfterSignOut = true,
-                PostLogoutRedirectUri = _config.MvcUrl,
+                AutomaticRedirectAfterSignOut = AccountOptions.AutomaticRedirectAfterSignOut,
+                PostLogoutRedirectUri = logout?.PostLogoutRedirectUri,
                 ClientName = string.IsNullOrEmpty(logout?.ClientName) ? logout?.ClientId : logout?.ClientName,
                 SignOutIframeUrl = logout?.SignOutIFrameUrl,
                 LogoutId = logoutId

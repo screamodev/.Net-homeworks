@@ -19,7 +19,7 @@ namespace IdentityServer
         {
             return new ApiResource[]
             {
-                new ApiResource("alevelwebsite.com", "Host")
+                new ApiResource("www.alevelwebsite.com:3000", "Host")
                 {
                     Scopes = new List<Scope>
                     {
@@ -41,7 +41,14 @@ namespace IdentityServer
                 {
                     Scopes = new List<Scope>
                     {
-                        new Scope("basket.basketbff", "Basket API"),
+                        new Scope("basket", "Basket API"),
+                    },
+                },
+                new ApiResource("order")
+                {
+                    Scopes = new List<Scope>
+                    {
+                        new Scope("order", "Order API"),
                     },
                 }
             };
@@ -57,8 +64,11 @@ namespace IdentityServer
                     ClientName = "MVC PKCE Client",
                     AllowedGrantTypes = GrantTypes.Code,
                     ClientSecrets = {new Secret("secret".Sha256())},
-                    RedirectUris = { $"{configuration["MvcUrl"]}/signin-oidc"},
-                    AllowedScopes = {"openid", "profile", "mvc"},
+                    RedirectUris = {  "http://www.alevelwebsite.com:3000/signin-oidc",
+                        "http://www.alevelwebsite.com:3000/api/auth/callback/identity-server4",
+                    },
+                    PostLogoutRedirectUris = { "http://www.alevelwebsite.com:3000" },
+                    AllowedScopes = {"openid", "profile", "mvc", "basket", "order"},
                     RequirePkce = true,
                     RequireConsent = false
                 },
@@ -116,7 +126,24 @@ namespace IdentityServer
 
                     AllowedScopes =
                     {
-                        "mvc"
+                        "mvc",
+                        "basket"
+                    }
+                },
+                new Client
+                {
+                    ClientId = "orderswaggerui",
+                    ClientName = "Order Swagger UI",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+
+                    RedirectUris = { $"{configuration["OrderApi"]}/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { $"{configuration["OrderApi"]}/swagger/" },
+
+                    AllowedScopes =
+                    {
+                        "mvc",
+                        "order"
                     }
                 },
             };
