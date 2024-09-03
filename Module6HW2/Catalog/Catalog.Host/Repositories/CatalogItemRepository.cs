@@ -47,13 +47,19 @@ public class CatalogItemRepository : ICatalogItemRepository
                 if (filter.Key == CatalogFilter.GenderId)
                 {
                     var id = filter.Value.ToList().First();
-                    query = query.Where(item => item.CatalogGender.Id == id);
+                    query = query.Where(item => item.CatalogGender != null && item.CatalogGender.Id == id);
                 }
 
                 if (filter.Key == CatalogFilter.SizeIds)
                 {
                     var ids = filter.Value.ToList();
-                    query = query.Where(item => item.CatalogItemSizes.Any(cs => ids.Contains(cs.Id)));
+
+                    foreach (var id in ids)
+                    {
+                        Console.WriteLine(id);
+                    }
+
+                    query = query.Where(item => item.CatalogItemSizes != null && item.CatalogItemSizes.Any(cs => ids.Contains(cs.Id)));
                 }
             }
         }
@@ -68,6 +74,18 @@ public class CatalogItemRepository : ICatalogItemRepository
             .ToListAsync();
 
         return new PaginatedItems<CatalogItem>() { TotalCount = totalItems, Data = itemsOnPage };
+    }
+
+    public async Task<CatalogItem?> GetById(int id)
+    {
+        var item = await _dbContext.CatalogItems
+            .Include(i => i.CatalogBrand)
+            .Include(i => i.CatalogType)
+            .Include(i => i.CatalogGender)
+            .Include(i => i.CatalogItemSizes)
+            .FirstOrDefaultAsync(item => item.Id == id);
+
+        return item;
     }
 
     public async Task<int?> Add(string name, string description, decimal price, int availableStock, int catalogBrandId, int catalogTypeId, string pictureFileName)

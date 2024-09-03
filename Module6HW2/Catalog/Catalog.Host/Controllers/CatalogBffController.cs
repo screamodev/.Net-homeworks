@@ -57,6 +57,21 @@ public class CatalogBffController : ControllerBase
 
     [HttpGet]
     [AllowAnonymous]
+    [ProducesResponseType(typeof(CatalogItemDto), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> ItemById(int id)
+    {
+        var result = await _catalogService.GetById(id);
+
+        if (result == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(result);
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(List<CatalogBrandDto>), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> Brands()
     {

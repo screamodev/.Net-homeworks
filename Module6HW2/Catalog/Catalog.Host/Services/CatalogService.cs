@@ -38,4 +38,16 @@ public class CatalogService : BaseDataService<ApplicationDbContext>, ICatalogSer
             };
         });
     }
+
+    public async Task<CatalogItemDto?> GetById(int id)
+    {
+        var item = await _catalogItemRepository.GetById(id);
+
+        if (item == null)
+        {
+            return null;
+        }
+
+        return _mapper.Map<CatalogItemDto>(item);
+    }
 }

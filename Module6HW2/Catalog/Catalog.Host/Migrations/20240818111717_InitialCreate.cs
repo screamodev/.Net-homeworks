@@ -86,7 +86,7 @@ namespace Catalog.Host.Migrations
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
                     PictureFileName = table.Column<string>(type: "text", nullable: true),
                     CatalogTypeId = table.Column<int>(type: "integer", nullable: false),
-                    CatalogGenderId = table.Column<int>(type: "integer", nullable: false),
+                    CatalogGenderId = table.Column<int>(type: "integer", nullable: true),
                     CatalogBrandId = table.Column<int>(type: "integer", nullable: false),
                     AvailableStock = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -103,8 +103,7 @@ namespace Catalog.Host.Migrations
                         name: "FK_Catalog_CatalogGender_CatalogGenderId",
                         column: x => x.CatalogGenderId,
                         principalTable: "CatalogGender",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Catalog_CatalogType_CatalogTypeId",
                         column: x => x.CatalogTypeId,
