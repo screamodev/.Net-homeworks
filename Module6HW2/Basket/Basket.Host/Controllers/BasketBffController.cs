@@ -1,14 +1,13 @@
-using Basket.Host.Models;
+using Basket.Host.Models.Responses;
 using Basket.Host.Services.Interfaces;
 using Infrastructure.Identity;
-using Infrastructure.RateLimit.Attributes;
-using Infrastructure.RateLimit.Filters;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Basket.Host.Controllers;
 
 [ApiController]
-[Authorize(Policy = AuthPolicy.AllowEndUserPolicy)]
+[Authorize(Policy = AuthPolicy.AllowClientPolicy)]
+[Scope("basket")]
 [Route(ComponentDefaults.DefaultRoute)]
 public class BasketBffController : ControllerBase
 {
@@ -22,23 +21,19 @@ public class BasketBffController : ControllerBase
         _logger = logger;
         _basketService = basketService;
     }
-    
-    [HttpPost]
-    [RateLimit]
-    [ProducesResponseType((int)HttpStatusCode.OK)]
-    public async Task<IActionResult> TestAdd(TestAddRequest data)
-    {
-        var basketId = User.Claims.FirstOrDefault(x => x.Type == "sub")?.Value;
-        await _basketService.TestAdd(basketId!, data.Data);
-        return Ok();
-    }
 
     [HttpPost]
-    [ProducesResponseType(typeof(TestGetResponse), (int)HttpStatusCode.OK)]
-    public async Task<IActionResult> TestGet()
+    [ProducesResponseType(typeof(GetBasketItemsResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> GetItems()
     {
         var basketId = User.Claims.FirstOrDefault(x => x.Type == "sub")?.Value;
-        var response = await _basketService.TestGet(basketId!);
+        
+        if (basketId == null)
+        {
+            return NotFound();
+        } 
+        
+        var response = await _basketService.GetItems(basketId);
         return Ok(response);
     }
 }
