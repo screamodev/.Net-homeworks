@@ -27,7 +27,7 @@ public class RateLimitService : IRateLimitService
     {
         var requestsCounter = await GetRequestsCounterAsync(key);
         requestsCounter++;
-        await _cacheService.AddOrUpdateAsync(key, requestsCounter, null, _options.Value.TimeLimit);
+        await _cacheService.AddOrUpdateAsync(key, requestsCounter, null!, _options.Value.TimeLimit);
     }
 
     public string GenerateRequestCounterKey(HttpContext context)

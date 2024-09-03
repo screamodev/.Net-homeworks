@@ -49,7 +49,7 @@ namespace Infrastructure.Redis.Services
             IDatabase redis, TimeSpan? expiry)
         {
             redis = redis ?? GetRedisDatabase();
-            expiry = expiry ?? _config.CacheTimeout;
+            expiry = expiry ?? TimeSpan.FromMinutes(2);
 
             var cacheKey = GetItemCacheKey(key);
             var serialized = _jsonSerializer.Serialize(value);
