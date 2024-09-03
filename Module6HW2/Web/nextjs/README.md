@@ -52,6 +52,9 @@ To run this application locally, follow these steps:
 - **Sass**: CSS preprocessor for writing styles.
 - **Tailwind CSS**: Utility-first CSS framework for styling.
 
-## Node.js Version
-
-This project requires Node.js version 18 or higher. Make sure you have the correct version installed.
+## Images
+![img.png](img.png)
+![img_1.png](img_1.png)
+![img_4.png](img_4.png)
+![img_2.png](img_2.png)
+![img_3.png](img_3.png)
